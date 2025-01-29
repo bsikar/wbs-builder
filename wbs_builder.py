@@ -47,55 +47,58 @@ def _cluster_style_for(label: str) -> dict:
 def _node_style_for(label: str, level: int = 0, colors: dict = None) -> dict:
     """
     Returns style dict for a node.
-    level: 0 for root, 1 for first level, 2 for second level, 3 for leaves
+    level: 0 for root, 1 for first level, 2 for second level, 3+ for deeper levels
     colors: Optional dictionary mapping levels to colors
     """
     if colors is None:
-        colors = {
-            0: "#FF9999",  # Light red for root
-            1: "#FFCC99",  # Light orange
-            2: "#FFFF99",  # Light yellow
-            3: "#99FF99",  # Light green
-            4: "#99FFFF",  # Light cyan
-            5: "#9999FF",  # Light blue
-            6: "#FF99FF"   # Light purple
-        }
+        colors = {0: "#fbf1c7"}  # Default to Gruvbox light0
+
+    # Adjust size based on level
+    sizes = {
+        0: ("0.5", "0.3"),  # (width, height) for root
+        1: ("0.45", "0.3"),
+        2: ("0.4", "0.25"),
+        3: ("0.35", "0.25"),
+        4: ("0.3", "0.2"),
+        5: ("0.25", "0.2"),
+        6: ("0.2", "0.15"),
+        7: ("0.15", "0.15")
+    }
+    width, height = sizes.get(level, ("0.15", "0.15"))
+    
+    # Adjust font size based on level
+    font_sizes = {
+        0: "12",
+        1: "11",
+        2: "10",
+        3: "9",
+        4: "8",
+        5: "8",
+        6: "7",
+        7: "7"
+    }
 
     base_style = {
         "shape": "box",
         "style": "filled",
-        "color": "black",
-        "fontcolor": "black",
+        "color": "#3c3836",  # Gruvbox dark0
+        "fillcolor": colors.get(level % len(colors), "#fbf1c7"),
+        "fontcolor": "#282828",  # Gruvbox dark
         "fontname": "Arial",
-        "fontsize": "12",
-        "height": "0.4",
-        "margin": "0.2,0.1",
-        "penwidth": "1.5"  # Make borders more visible with colors
+        "fontsize": font_sizes.get(level, "7"),
+        "height": height,
+        "width": width,
+        "margin": "0.05",
+        "penwidth": "1.0"
     }
 
-    # Width decreases with each level
-    widths = {0: "3.0", 1: "2.8", 2: "2.6", 3: "2.5", 4: "2.4", 5: "2.3", 6: "2.2"}
-    
-    # Get color for this level, cycling through colors if we go deeper than defined colors
-    level_color = colors.get(level % len(colors)) if colors else "white"
-    
-    style = {
-        **base_style,
-        "fillcolor": level_color,
-        "width": widths.get(level, "2.0")
-    }
-
-    # Make top two levels bold
-    if level <= 1:
-        style["style"] = "filled,bold"
-    
-    return style
+    return base_style
 
 def create_wbs_diagram(
     wbs_structure: dict,
     output_filename: str = "wbs_output",
     file_format: str = "pdf",
-    graph_direction: str = "LR",
+    graph_direction: str = "TB",
     colors: dict = None
 ) -> None:
     """
@@ -104,75 +107,79 @@ def create_wbs_diagram(
     logger.info("Creating WBS diagram...")
     try:
         dot = Digraph(comment="Work Breakdown Structure")
-        # Adjust graph attributes for compact vertical layout
         dot.attr(
             rankdir=graph_direction,
-            splines="ortho",
-            nodesep="0.15",   # Vertical spacing between nodes in same rank
-            ranksep="0.05",   # Horizontal spacing between ranks
-            pad="0.05",
-            concentrate="false",
+            splines="line",
+            nodesep="0.2",      # Reduced for compactness
+            ranksep="0.25",     # Reduced for compactness
+            pad="0.2",
+            concentrate="true",  # Help reduce edge crossings
             compound="true",
             newrank="true",
-            size="4,13!",     # Swap dimensions for vertical layout
-            ratio="fill",
-            margin="0.05"
+            bgcolor="#f9f5d7"   # Gruvbox light background
         )
 
-        def add_nodes_and_edges(structure_dict, parent_node=None, level=0):
+        def add_nodes_and_edges(items, parent_node=None, level=0, parent_number=""):
             """
             Recursively add nodes and edges to the graph.
             """
             nodes = []
             
-            # Sort items to help with layout
-            items = sorted(structure_dict.items(), key=lambda x: x[0])
-            
-            for label, children in items:
-                # Create unique node ID
-                node_id = re.sub(r"[^a-zA-Z0-9_]", "_", label)
-                
-                # Add the node with level-appropriate styling
-                node_style = _node_style_for(label, level, colors)
-                # Make nodes very compact
-                if level > 0:
-                    node_style["width"] = str(float(node_style.get("width", "2.0")) * 0.6)  # Even narrower for vertical
-                    node_style["height"] = "0.2"
-                    node_style["margin"] = "0.02,0.01"
-                    node_style["fontsize"] = "10"
-                    if level > 2:
-                        node_style["height"] = "0.18"
-                        node_style["fontsize"] = "9"
-                        node_style["margin"] = "0.01,0.01"
-                        node_style["width"] = str(float(node_style.get("width", "2.0")) * 0.9)  # Slightly narrower for deep levels
-                
-                dot.node(node_id, label, **node_style)
-                nodes.append(node_id)
-                
-                # If there's a parent, add an edge
-                if parent_node:
-                    dot.edge(parent_node, node_id, 
-                           color="black", 
-                           penwidth="0.5", 
-                           arrowsize="0.3",
-                           minlen="1")
-                
-                # Recurse for children with incremented level
-                if children:
+            if isinstance(items, dict):
+                # Handle the root level
+                for label, children in items.items():
+                    node_id = re.sub(r"[^a-zA-Z0-9_]", "_", label)
+                    node_style = _node_style_for(label, level, colors)
+                    dot.node(node_id, label, **node_style)
                     add_nodes_and_edges(children, node_id, level + 1)
+            else:
+                # Handle list of tuples for other levels
+                for idx, (label, children) in enumerate(items, 1):
+                    # Generate node number based on level and position
+                    if level == 1:
+                        node_number = f"{idx}.0"
+                    elif level > 1:
+                        if parent_number:
+                            if parent_number.endswith('.0'):
+                                # Remove the .0 for cleaner numbering
+                                parent_base = parent_number[:-2]
+                                node_number = f"{parent_base}.{idx}"
+                            else:
+                                node_number = f"{parent_number}.{idx}"
+                        else:
+                            node_number = str(idx)
+                    else:
+                        node_number = ""
+
+                    # Format the display label with the WBS number
+                    if level > 0:  # Don't add number to root level
+                        display_label = f"{label} ({node_number})"
+                    else:
+                        display_label = label
+                    
+                    # Create unique node ID
+                    node_id = re.sub(r"[^a-zA-Z0-9_]", "_", f"{label}_{node_number}")
+                    
+                    # Add the node
+                    node_style = _node_style_for(display_label, level, colors)
+                    dot.node(node_id, display_label, **node_style)
+                    nodes.append(node_id)
+                    
+                    if parent_node:
+                        dot.edge(parent_node, node_id,
+                               color="#3c3836",  # Gruvbox dark0
+                               arrowsize="0.6",
+                               penwidth="1.0")
+                    
+                    if children:
+                        add_nodes_and_edges(children, node_id, level + 1, node_number)
             
             return nodes
 
-        # Start with top-level items (level 0)
+        # Start with top-level items
         for top_label, top_structure in wbs_structure.items():
             top_node_id = re.sub(r"[^a-zA-Z0-9_]", "_", top_label)
-            # Make root node compact
-            root_style = _node_style_for(top_label, 0, colors)
-            root_style["width"] = "1.2"  # Narrower root for vertical layout
-            root_style["height"] = "0.25"
-            root_style["margin"] = "0.05,0.02"
-            root_style["fontsize"] = "11"
-            dot.node(top_node_id, top_label, **root_style)
+            dot.node(top_node_id, top_label, **_node_style_for(top_label, 0, colors))
             add_nodes_and_edges(top_structure, top_node_id, 1)
 
         # Render the final diagram
