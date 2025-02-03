@@ -467,8 +467,7 @@ def create_ram_diagram(
             
             # Set background color based on type and level
             if item['type'] == 'Subtask':
-                bg_color = WBSColors.DEFAULT.get(current_level + 1, WBSColors.DEFAULT[0])
-                current_level += 1
+                bg_color = WBSColors.DEFAULT.get(item['level'], WBSColors.DEFAULT[0])
             else:
                 bg_color = {
                     'Project': '#f9f5d7',
