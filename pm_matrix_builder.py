@@ -185,27 +185,27 @@ def _node_style_for(label: str, level: int = 0, colors: dict = None) -> dict:
 
     # Adjust size based on level
     sizes = {
-        0: ("0.5", "0.3"),  # (width, height) for root
-        1: ("0.45", "0.3"),
-        2: ("0.4", "0.25"),
-        3: ("0.35", "0.25"),
-        4: ("0.3", "0.2"),
-        5: ("0.25", "0.2"),
-        6: ("0.2", "0.15"),
-        7: ("0.15", "0.15")
+        0: ("0.8", "0.3"),   # Root node
+        1: ("0.7", "0.3"),   # Phase nodes
+        2: ("0.6", "0.25"),  # Activity nodes
+        3: ("0.5", "0.25"),  # Task nodes
+        4: ("0.4", "0.2"),   # Subtask nodes
+        5: ("0.4", "0.2"),
+        6: ("0.3", "0.2"),
+        7: ("0.3", "0.2")
     }
-    width, height = sizes.get(level, ("0.15", "0.15"))
+    width, height = sizes.get(level, ("0.3", "0.2"))
     
     # Adjust font size based on level
     font_sizes = {
-        0: "12",
-        1: "11",
-        2: "10",
-        3: "9",
-        4: "8",
+        0: "12",  # Root
+        1: "11",  # Phases
+        2: "10",  # Activities
+        3: "9",   # Tasks
+        4: "9",   # Subtasks
         5: "8",
-        6: "7",
-        7: "7"
+        6: "8",
+        7: "8"
     }
 
     return {
@@ -215,10 +215,10 @@ def _node_style_for(label: str, level: int = 0, colors: dict = None) -> dict:
         "fillcolor": colors.get(level % len(colors), "#fbf1c7"),
         "fontcolor": "#282828",  # Gruvbox dark
         "fontname": "Arial",
-        "fontsize": font_sizes.get(level, "7"),
+        "fontsize": font_sizes.get(level, "8"),
         "height": height,
         "width": width,
-        "margin": "0.05",
+        "margin": "0.1",
         "penwidth": "1.0"
     }
 
@@ -226,7 +226,7 @@ def create_wbs_diagram(
     wbs_structure: dict,
     output_filename: str = "wbs_output",
     file_format: str = "pdf",
-    graph_direction: str = "TB",
+    graph_direction: str = "LR",  # Changed to LR for left-to-right layout
     colors: dict = None
 ) -> None:
     """
@@ -245,9 +245,9 @@ def create_wbs_diagram(
         dot.attr(
             rankdir=graph_direction,
             splines="line",
-            nodesep="0.2",
-            ranksep="0.25",
-            pad="0.2",
+            nodesep="0.2",      # Reduced horizontal spacing
+            ranksep="0.4",      # Increased vertical spacing
+            pad="0.2",          # Standard padding
             concentrate="true",
             compound="true",
             newrank="true",
@@ -260,7 +260,7 @@ def create_wbs_diagram(
         if file_format == "png":
             dot.attr(
                 dpi="1200",     # Even higher resolution for PNG
-                size="50,50",   # Large canvas size
+                size="100,50",  # Wide canvas for left-to-right layout
                 ratio="compress" # Maintain aspect ratio while fitting to size
             )
 
