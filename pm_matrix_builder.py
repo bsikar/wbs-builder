@@ -646,9 +646,6 @@ def export_to_excel(all_items: List[Dict], output_filename: str = "project_data"
         
         # Define styles
         header_fill = openpyxl.styles.PatternFill(start_color='D3D3D3', end_color='D3D3D3', fill_type='solid')
-        project_fill = openpyxl.styles.PatternFill(start_color='F9F5D7', end_color='F9F5D7', fill_type='solid')
-        phase_fill = openpyxl.styles.PatternFill(start_color='EBDBB2', end_color='EBDBB2', fill_type='solid')
-        activity_fill = openpyxl.styles.PatternFill(start_color='D5C4A1', end_color='D5C4A1', fill_type='solid')
         
         # Style headers
         for cell in worksheet[1]:
@@ -657,16 +654,23 @@ def export_to_excel(all_items: List[Dict], output_filename: str = "project_data"
         
         # Style data rows
         for row_idx, item in enumerate(all_items, start=2):
-            # Set row background based on type
-            fill = {
-                'Project': project_fill,
-                'Phase': phase_fill,
-                'Activity': activity_fill,
-            }.get(item['type'])
+            # Set row background based on type and level
+            if item['type'] == 'Subtask':
+                # Remove the '#' from the color code
+                color = WBSColors.DEFAULT.get(item['level'], WBSColors.DEFAULT[0])[1:]
+                fill = openpyxl.styles.PatternFill(start_color=color, end_color=color, fill_type='solid')
+            else:
+                colors = {
+                    'Project': 'F9F5D7',
+                    'Phase': 'EBDBB2',
+                    'Activity': 'D5C4A1'
+                }
+                color = colors.get(item['type'], 'FFFFFF')
+                fill = openpyxl.styles.PatternFill(start_color=color, end_color=color, fill_type='solid')
             
-            if fill:
-                for cell in worksheet[row_idx]:
-                    cell.fill = fill
+            # Apply background color to all cells in the row
+            for cell in worksheet[row_idx]:
+                cell.fill = fill
             
             # Color responsibility cells for Subtasks
             if item['type'] == 'Subtask':
@@ -685,13 +689,6 @@ def export_to_excel(all_items: List[Dict], output_filename: str = "project_data"
                         cell.fill = openpyxl.styles.PatternFill(
                             start_color=resp_colors[resp],
                             end_color=resp_colors[resp],
-                            fill_type='solid'
-                        )
-                    else:
-                        # Ensure non-responsibility cells maintain the row color
-                        cell.fill = openpyxl.styles.PatternFill(
-                            start_color=WBSColors.DEFAULT.get(item['level'], WBSColors.DEFAULT[0])[1:],
-                            end_color=WBSColors.DEFAULT.get(item['level'], WBSColors.DEFAULT[0])[1:],
                             fill_type='solid'
                         )
         
