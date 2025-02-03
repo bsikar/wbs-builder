@@ -57,7 +57,7 @@ def is_leaf_node(item: Dict) -> bool:
 
 def convert_yaml_to_wbs_format(yaml_data: Dict) -> Dict[str, List[Tuple[str, List]]]:
     """
-    Convert YAML data structure to WBS format.
+    Convert YAML data structure to WBS format, skipping nodes with only one child.
     
     Args:
         yaml_data: Dictionary containing the YAML data structure
@@ -79,13 +79,29 @@ def convert_yaml_to_wbs_format(yaml_data: Dict) -> Dict[str, List[Tuple[str, Lis
             for item in items:
                 if isinstance(item, dict):
                     for child_name, child_items in item.items():
-                        result.append((child_name, process_item(child_name, child_items)))
+                        child_result = process_item(child_name, child_items)
+                        if child_result or is_leaf_node(child_items):
+                            result.append((child_name, child_result))
         elif isinstance(items, dict):
             # Handle dictionary items, excluding metadata fields
             metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'wbs_number', 'name'}
+            valid_children = []
+            
+            # First, collect all valid children
             for child_name, child_items in items.items():
                 if child_name not in metadata_fields and isinstance(child_items, dict):
-                    result.append((child_name, process_item(child_name, child_items)))
+                    child_result = process_item(child_name, child_items)
+                    if child_result or is_leaf_node(child_items):
+                        valid_children.append((child_name, child_items, child_result))
+            
+            # Process children based on count
+            for child_name, child_items, child_result in valid_children:
+                if len(valid_children) >= 2 or is_leaf_node(child_items):
+                    # Keep this node if parent has multiple children or if it's a leaf
+                    result.append((child_name, child_result))
+                else:
+                    # Skip single-child nodes by adding their children directly
+                    result.extend(child_result)
 
         return result
 
@@ -98,9 +114,24 @@ def convert_yaml_to_wbs_format(yaml_data: Dict) -> Dict[str, List[Tuple[str, Lis
             # Exclude metadata fields at root level
             metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'wbs_number', 'name'}
             children = []
+            valid_children = []
+            
+            # First, collect all valid children
             for child_name, child_items in root_items.items():
                 if child_name not in metadata_fields and isinstance(child_items, dict):
-                    children.append((child_name, process_item(child_name, child_items)))
+                    child_result = process_item(child_name, child_items)
+                    if child_result or is_leaf_node(child_items):
+                        valid_children.append((child_name, child_items, child_result))
+            
+            # Process children based on count
+            for child_name, child_items, child_result in valid_children:
+                if len(valid_children) >= 2 or is_leaf_node(child_items):
+                    # Keep this node if parent has multiple children or if it's a leaf
+                    children.append((child_name, child_result))
+                else:
+                    # Skip single-child nodes by adding their children directly
+                    children.extend(child_result)
+            
             result[project_name] = children
     
     return result
@@ -333,7 +364,7 @@ def create_ram_legend(dot: Digraph) -> None:
 
 def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=None):
     """
-    Extract hierarchical items from YAML data.
+    Extract hierarchical items from YAML data, skipping nodes with only one child.
     
     Args:
         data: Dictionary containing the YAML data
@@ -373,6 +404,12 @@ def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=Non
         else:
             # For deeper levels, remove the first number and join the rest
             return ".".join(str(x) for x in path[1:]) if len(path) > 1 else str(path[0])
+
+    def count_valid_children(node):
+        """Count the number of valid (non-metadata) children a node has"""
+        if not isinstance(node, dict):
+            return 0
+        return sum(1 for k, v in node.items() if k not in metadata_fields and isinstance(v, dict))
 
     # Get all valid items (non-metadata) at this level and sort them by structure
     valid_items = []
@@ -415,47 +452,57 @@ def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=Non
             # For passing to children, use the full path string
             child_wbs = ".".join(str(x) for x in current_path)
             
-            # Determine type based on level and content
-            if level == 0:
-                current_type = "Project"
-                display_name = content.get('name', name)
-            elif level == 1:  # Phase is determined by level
-                current_type = "Phase"
-                display_name = name
-            elif level == 2:  # Activity is one level below Phase
-                current_type = "Activity"
-                display_name = name
-            elif is_leaf_node(content):
-                current_type = "Subtask"
-                display_name = name
-            else:
-                current_type = "Task"  # Everything else is a Task
-                display_name = name
+            # Count valid children
+            child_count = count_valid_children(content)
             
-            # Get responsibilities and other attributes
-            responsibilities = content.get('responsibilities', {})
-            duration = content.get('duration', '')
-            labor = content.get('labor', '')
+            # Determine if we should skip this node
+            should_skip = child_count == 1 and not is_leaf_node(content)
             
-            # Add the current item
-            items.append({
-                'name': display_name,
-                'parent': parent_name,
-                'type': current_type,
-                'wbs_number': wbs_number,
-                'responsibilities': responsibilities,
-                'duration': duration,
-                'labor': labor,
-                'level': level
-            })
+            if not should_skip:
+                # Determine type based on level and content
+                if level == 0:
+                    current_type = "Project"
+                    display_name = content.get('name', name)
+                elif level == 1:  # Phase is determined by level
+                    current_type = "Phase"
+                    display_name = name
+                elif level == 2:  # Activity is one level below Phase
+                    current_type = "Activity"
+                    display_name = name
+                elif is_leaf_node(content):
+                    current_type = "Subtask"
+                    display_name = name
+                else:
+                    current_type = "Task"  # Everything else is a Task
+                    display_name = name
+                
+                # Get responsibilities and other attributes
+                responsibilities = content.get('responsibilities', {})
+                duration = content.get('duration', '')
+                labor = content.get('labor', '')
+                
+                # Add the current item
+                items.append({
+                    'name': display_name,
+                    'parent': parent_name,
+                    'type': current_type,
+                    'wbs_number': wbs_number,
+                    'responsibilities': responsibilities,
+                    'duration': duration,
+                    'labor': labor,
+                    'level': level
+                })
             
             # Process children (excluding metadata fields)
             children_data = {k: v for k, v in content.items() if k not in metadata_fields and isinstance(v, dict)}
             if children_data:
+                # If we're skipping this node, use the parent's name and level
+                next_parent = parent_name if should_skip else display_name
+                next_level = level if should_skip else level + 1
                 items.extend(extract_items(
                     children_data,
-                    display_name,
-                    level + 1,
+                    next_parent,
+                    next_level,
                     child_wbs,
                     current_path
                 ))
