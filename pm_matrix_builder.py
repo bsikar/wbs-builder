@@ -252,9 +252,17 @@ def create_wbs_diagram(
             compound="true",
             newrank="true",
             bgcolor="#f9f5d7",   # Gruvbox light background
-            dpi="600",           # High resolution but not excessive
+            dpi="600",           # High resolution
             fontname="Arial"     # Consistent font
         )
+
+        # Additional PNG-specific attributes for higher quality
+        if file_format == "png":
+            dot.attr(
+                dpi="1200",     # Even higher resolution for PNG
+                size="50,50",   # Large canvas size
+                ratio="compress" # Maintain aspect ratio while fitting to size
+            )
 
         def add_nodes_and_edges(items, parent_node=None, level=0, parent_number=""):
             """
@@ -537,8 +545,17 @@ def create_ram_diagram(
             nodesep="0.2",
             ranksep="0.3",
             pad="0.2",
-            bgcolor="white"
+            bgcolor="white",
+            dpi="600"  # High resolution
         )
+
+        # Additional PNG-specific attributes for higher quality
+        if file_format == "png":
+            dot.attr(
+                dpi="1200",     # Even higher resolution for PNG
+                size="50,50",   # Large canvas size
+                ratio="compress" # Maintain aspect ratio while fitting to size
+            )
 
         # Create the main RAM table with project name in header
         main_table_html = f'''<
@@ -927,14 +944,16 @@ def create_wbs_and_ram(
     # Load YAML data once
     yaml_data = load_wbs_from_yaml(yaml_file)
     
-    # Create WBS diagram
-    create_wbs_from_yaml(yaml_file, wbs_filename, file_format)
+    # Create WBS diagram in both PDF and PNG
+    create_wbs_from_yaml(yaml_file, wbs_filename, "pdf")
+    create_wbs_from_yaml(yaml_file, wbs_filename, "png")
     
     # Extract items for RAM and Excel export
     all_items = extract_items(yaml_data)
     
-    # Create RAM diagram
-    create_ram_diagram(yaml_file, ram_filename, file_format)
+    # Create RAM diagram in both PDF and PNG
+    create_ram_diagram(yaml_file, ram_filename, "pdf")
+    create_ram_diagram(yaml_file, ram_filename, "png")
     
     # Export to Excel
     export_to_excel(all_items, excel_filename) 
