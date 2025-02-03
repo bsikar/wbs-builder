@@ -1,0 +1,283 @@
+# Work Breakdown Structure for Project
+# Each level can have a name and children plus RAM attributes
+#
+# Roles:
+#   project_manager: Project Manager - Oversees project planning, execution, and delivery
+#   hardware: Hardware Engineer - Responsible for physical/electronic hardware development
+#   software: Software Engineer - Handles software and firmware development
+#   testing: Test Engineer - Manages testing, validation, and quality assurance
+#   sponsor: Project Sponsor - Key stakeholder providing oversight and approvals
+#   other: External Resources - Marketing, vendors, consultants, etc.
+#
+# Responsibility Types:
+#   L = Lead: Primary responsibility for the task
+#   P = Participant: Active involvement in task execution
+#   R = Reviewer: Reviews and provides feedback
+#   I = Input: Provides input or consulted
+#   null = No involvement
+#
+# Attributes:
+#   type: Only needed for Phase, others are inferred (Project=root, Subtask=leaf, Activity=others)
+#   responsibilities: Required for leaf nodes (Subtasks)
+#     project_manager: L/P/R/I
+#     hardware: L/P/R/I
+#     software: L/P/R/I
+#     testing: L/P/R/I
+#     sponsor: L/P/R/I
+#     other: L/P/R/I
+#   duration: Required for leaf nodes (days)
+#   labor: Required for leaf nodes (person-hours)
+
+project:
+  name: "SelfiePod"
+  Market Analysis:
+    type: "Phase"
+    Materials Research:
+      Battery Research:
+        Battery Types:
+          Lithium Ion:
+            Cell Chemistry:
+              Cathode Materials:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
+              Anode Materials:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
+              Electrolyte Composition:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
+            Form Factor:
+              Cylindrical:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 2
+                labor: 16
+              Prismatic:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 2
+                labor: 16
+              Pouch:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 2
+                labor: 16
+          LiFePO4:
+            Safety Features:
+              Thermal Management:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
+              Overcharge Protection:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
+              Short Circuit Prevention:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
+        Battery Capacity:
+          Power Requirements:
+            responsibilities:
+              project_manager: "R"
+              hardware: "L"
+              software: "P"
+              testing: "P"
+              sponsor: "I"
+              other: ""
+            duration: 2
+            labor: 16
+          Usage Duration:
+            responsibilities:
+              project_manager: "R"
+              hardware: "L"
+              software: "P"
+              testing: "P"
+              sponsor: "I"
+              other: ""
+            duration: 2
+            labor: 16
+          Size Constraints:
+            responsibilities:
+              project_manager: "R"
+              hardware: "L"
+              software: ""
+              testing: "P"
+              sponsor: "I"
+              other: ""
+            duration: 2
+            labor: 16
+        Battery Safety:
+          Temperature Control:
+            responsibilities:
+              project_manager: "R"
+              hardware: "L"
+              software: "P"
+              testing: "P"
+              sponsor: "I"
+              other: ""
+            duration: 2
+            labor: 16
+          Protection Circuits:
+            responsibilities:
+              project_manager: "R"
+              hardware: "L"
+              software: "P"
+              testing: "P"
+              sponsor: "I"
+              other: ""
+            duration: 2
+            labor: 16
+          Certification Requirements:
+            responsibilities:
+              project_manager: "L"
+              hardware: "P"
+              software: ""
+              testing: "P"
+              sponsor: "I"
+              other: ""
+            duration: 2
+            labor: 16
+        Battery Suppliers:
+          Vendor Selection:
+            responsibilities:
+              project_manager: "L"
+              hardware: "P"
+              software: ""
+              testing: ""
+              sponsor: "I"
+              other: ""
+            duration: 2
+            labor: 16
+  User Needs Analysis:
+    type: "Phase"
+    Target Audience Research:
+      Demographics:
+        responsibilities:
+          project_manager: "L"
+          hardware: ""
+          software: ""
+          testing: ""
+          sponsor: "I"
+          other: "P"
+        duration: 2
+        labor: 16
+      Usage Patterns:
+        responsibilities:
+          project_manager: "L"
+          hardware: ""
+          software: ""
+          testing: ""
+          sponsor: "I"
+          other: "P"
+        duration: 2
+        labor: 16
+      Purchase Behavior:
+        responsibilities:
+          project_manager: "L"
+          hardware: ""
+          software: ""
+          testing: ""
+          sponsor: "I"
+          other: "P"
+        duration: 2
+        labor: 16
+    User Pain Points:
+      Current Solutions:
+        responsibilities:
+          project_manager: "L"
+          hardware: "P"
+          software: "P"
+          testing: ""
+          sponsor: "I"
+          other: ""
+        duration: 2
+        labor: 16
+      Unmet Needs:
+        responsibilities:
+          project_manager: "L"
+          hardware: "P"
+          software: "P"
+          testing: ""
+          sponsor: "I"
+          other: ""
+        duration: 2
+        labor: 16
+      Feature Requests:
+        responsibilities:
+          project_manager: "L"
+          hardware: "P"
+          software: "P"
+          testing: ""
+          sponsor: "I"
+          other: ""
+        duration: 2
+        labor: 16
+  Build:
+    type: "Phase"
+    Component Sourcing:
+      Battery Procurement:
+        Supplier Selection:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: ""
+            testing: ""
+            sponsor: "I"
+            other: ""
+          duration: 2
+          labor: 16

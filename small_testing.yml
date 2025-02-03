@@ -1,0 +1,87 @@
+Test Project:
+  type: Project
+  Phase 1 - Planning:
+    type: Phase
+    Project Management:
+      type: Activity
+      Requirements Gathering:
+        type: Subtask
+        wbs_number: 1.1.1
+        responsibilities:
+          project_manager: "L"
+          hardware: "I"
+          software: "P"
+        duration: 1
+        labor: 2
+      Project Schedule:
+        type: Subtask
+        wbs_number: 1.1.2
+        responsibilities:
+          project_manager: "L"
+          hardware: "I"
+          software: "I"
+        duration: 1
+        labor: 1
+  Phase 2 - Development:
+    type: Phase
+    Hardware Development:
+      type: Activity
+      Hardware Setup:
+        type: Subtask
+        wbs_number: 2.1.1
+        responsibilities:
+          hardware: "L"
+          software: "I"
+          testing: "P"
+        duration: 3
+        labor: 2
+    Software Development:
+      type: Activity
+      Software Implementation:
+        type: Subtask
+        wbs_number: 2.2.1
+        responsibilities:
+          hardware: "R"
+          software: "L"
+          testing: "P"
+        duration: 2
+        labor: 4
+
+SelfiePod:
+  type: Project
+  Market Analysis:
+    type: Phase
+    Materials Research:
+      type: Activity
+      Battery Research:
+        type: Activity
+        Battery Types:
+          type: Activity
+          Lithium Ion:
+            type: Activity
+            Cell Chemistry:
+              type: Activity
+              Cathode Materials:
+                type: Subtask
+                wbs_number: 1.1.1.1.1.1.1.1
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
+              Anode Materials:
+                type: Subtask
+                wbs_number: 1.1.1.1.1.1.1.2
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: ""
+                  testing: "P"
+                  sponsor: "I"
+                  other: ""
+                duration: 2
+                labor: 16
