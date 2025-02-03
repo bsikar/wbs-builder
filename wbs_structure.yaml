@@ -203,70 +203,133 @@ project:
               other: ""
             duration: 2
             labor: 16
-  User Needs Analysis:
-    type: "Phase"
-    Target Audience Research:
-      Demographics:
-        responsibilities:
-          project_manager: "L"
-          hardware: ""
-          software: ""
-          testing: ""
-          sponsor: "I"
-          other: "P"
-        duration: 2
-        labor: 16
-      Usage Patterns:
-        responsibilities:
-          project_manager: "L"
-          hardware: ""
-          software: ""
-          testing: ""
-          sponsor: "I"
-          other: "P"
-        duration: 2
-        labor: 16
-      Purchase Behavior:
-        responsibilities:
-          project_manager: "L"
-          hardware: ""
-          software: ""
-          testing: ""
-          sponsor: "I"
-          other: "P"
-        duration: 2
-        labor: 16
-    User Pain Points:
-      Current Solutions:
-        responsibilities:
-          project_manager: "L"
-          hardware: "P"
-          software: "P"
-          testing: ""
-          sponsor: "I"
-          other: ""
-        duration: 2
-        labor: 16
-      Unmet Needs:
-        responsibilities:
-          project_manager: "L"
-          hardware: "P"
-          software: "P"
-          testing: ""
-          sponsor: "I"
-          other: ""
-        duration: 2
-        labor: 16
-      Feature Requests:
-        responsibilities:
-          project_manager: "L"
-          hardware: "P"
-          software: "P"
-          testing: ""
-          sponsor: "I"
-          other: ""
-        duration: 2
-        labor: 16
+      Plastic Research:
+        Plastic Types:
+          ABS Analysis:
+            Impact Resistance:
+              responsibilities:
+                project_manager: "R"
+                hardware: "L"
+                software: ""
+                testing: "P"
+                sponsor: ""
+                other: ""
+              duration: 3
+              labor: 24
+            Heat Resistance:
+              responsibilities:
+                project_manager: "R"
+                hardware: "L"
+                software: ""
+                testing: "P"
+                sponsor: ""
+                other: ""
+              duration: 3
+              labor: 24
+            Cost Analysis:
+              responsibilities:
+                project_manager: "L"
+                hardware: "P"
+                software: ""
+                testing: ""
+                sponsor: "I"
+                other: ""
+              duration: 2
+              labor: 16
+          Polycarbonate Study:
+            Durability Tests:
+              responsibilities:
+                project_manager: "R"
+                hardware: "L"
+                software: ""
+                testing: "P"
+                sponsor: ""
+                other: ""
+              duration: 3
+              labor: 24
+            UV Resistance:
+              responsibilities:
+                project_manager: "R"
+                hardware: "L"
+                software: ""
+                testing: "P"
+                sponsor: ""
+                other: ""
+              duration: 3
+              labor: 24
+            Manufacturing Process:
+              responsibilities:
+                project_manager: "R"
+                hardware: "L"
+                software: ""
+                testing: "P"
+                sponsor: "I"
+                other: ""
+              duration: 4
+              labor: 32
+    User Needs Analysis:
+      Target Audience Research:
+        Demographics:
+          responsibilities:
+            project_manager: "L"
+            hardware: ""
+            software: ""
+            testing: ""
+            sponsor: "I"
+            other: "P"
+          duration: 2
+          labor: 16
+        Usage Patterns:
+          responsibilities:
+            project_manager: "L"
+            hardware: ""
+            software: ""
+            testing: ""
+            sponsor: "I"
+            other: "P"
+          duration: 2
+          labor: 16
+        Purchase Behavior:
+          responsibilities:
+            project_manager: "L"
+            hardware: ""
+            software: ""
+            testing: ""
+            sponsor: "I"
+            other: "P"
+          duration: 2
+          labor: 16
+      User Pain Points:
+        Current Solutions:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: "P"
+            testing: ""
+            sponsor: "I"
+            other: ""
+          duration: 2
+          labor: 16
+        Unmet Needs:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: "P"
+            testing: ""
+            sponsor: "I"
+            other: ""
+          duration: 2
+          labor: 16
+        Feature Requests:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: "P"
+            testing: ""
+            sponsor: "I"
+            other: ""
+          duration: 2
+          labor: 16
   Build:
     type: "Phase"
     Component Sourcing:
@@ -279,5 +342,418 @@ project:
             testing: ""
             sponsor: "I"
             other: ""
+          duration: 3
+          labor: 24
+        Quality Verification:
+          responsibilities:
+            project_manager: "R"
+            hardware: "L"
+            software: ""
+            testing: "P"
+            sponsor: ""
+            other: ""
+          duration: 4
+          labor: 32
+        Cost Negotiation:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: ""
+            testing: ""
+            sponsor: "I"
+            other: ""
+          duration: 3
+          labor: 24
+      Electronics Components:
+        Component List:
+          responsibilities:
+            project_manager: "R"
+            hardware: "L"
+            software: "P"
+            testing: ""
+            sponsor: ""
+            other: ""
           duration: 2
           labor: 16
+        Supplier Quotes:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: ""
+            testing: ""
+            sponsor: "I"
+            other: ""
+          duration: 3
+          labor: 24
+        Lead Time Analysis:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: ""
+            testing: ""
+            sponsor: "I"
+            other: ""
+          duration: 2
+          labor: 16
+    Prototype Development:
+      Initial Prototype:
+        3D Printing:
+          responsibilities:
+            project_manager: "R"
+            hardware: "L"
+            software: ""
+            testing: "P"
+            sponsor: ""
+            other: ""
+          duration: 5
+          labor: 40
+        Assembly:
+          responsibilities:
+            project_manager: "R"
+            hardware: "L"
+            software: "P"
+            testing: "P"
+            sponsor: ""
+            other: ""
+          duration: 4
+          labor: 32
+        Testing:
+          responsibilities:
+            project_manager: "R"
+            hardware: "P"
+            software: "P"
+            testing: "L"
+            sponsor: ""
+            other: ""
+          duration: 5
+          labor: 40
+      Final Prototype:
+        Production Methods:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: ""
+            testing: "P"
+            sponsor: "I"
+            other: ""
+          duration: 4
+          labor: 32
+        Quality Control:
+          responsibilities:
+            project_manager: "R"
+            hardware: "P"
+            software: ""
+            testing: "L"
+            sponsor: ""
+            other: ""
+          duration: 3
+          labor: 24
+        Documentation:
+          responsibilities:
+            project_manager: "L"
+            hardware: "P"
+            software: "P"
+            testing: "P"
+            sponsor: "R"
+            other: ""
+          duration: 3
+          labor: 24
+  Testing:
+    type: "Phase"
+    Quality Assurance:
+      Component Testing:
+        Electrical Testing:
+          Power System:
+            Battery Performance:
+              Charge Cycles:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: ""
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 5
+                labor: 40
+              Voltage Stability:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: ""
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+              Temperature Profile:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: ""
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 4
+                labor: 32
+            Circuit Validation:
+              Signal Integrity:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "P"
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+              EMI Testing:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: ""
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 4
+                labor: 32
+              Power Efficiency:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: ""
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+          Control System:
+            MCU Validation:
+              Clock Stability:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "P"
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 2
+                labor: 16
+              Memory Tests:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "P"
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 2
+                labor: 16
+              Peripheral Tests:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "P"
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+  Marketing:
+    type: "Phase"
+    Digital Marketing:
+      Social Media:
+        Platform Strategy:
+          Instagram Campaign:
+            Content Creation:
+              Photo Shoots:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: ""
+                  software: ""
+                  testing: ""
+                  sponsor: "I"
+                  other: "L"
+                duration: 3
+                labor: 24
+              Video Production:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: ""
+                  software: ""
+                  testing: ""
+                  sponsor: "I"
+                  other: "L"
+                duration: 4
+                labor: 32
+              Story Templates:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: ""
+                  software: ""
+                  testing: ""
+                  sponsor: "I"
+                  other: "L"
+                duration: 2
+                labor: 16
+            Influencer Program:
+              Selection Criteria:
+                responsibilities:
+                  project_manager: "L"
+                  hardware: ""
+                  software: ""
+                  testing: ""
+                  sponsor: "I"
+                  other: "P"
+                duration: 2
+                labor: 16
+              Engagement Metrics:
+                responsibilities:
+                  project_manager: "L"
+                  hardware: ""
+                  software: "P"
+                  testing: ""
+                  sponsor: "I"
+                  other: "P"
+                duration: 2
+                labor: 16
+              ROI Analysis:
+                responsibilities:
+                  project_manager: "L"
+                  hardware: ""
+                  software: "P"
+                  testing: ""
+                  sponsor: "I"
+                  other: "P"
+                duration: 3
+                labor: 24
+          TikTok Strategy:
+            Trend Analysis:
+              responsibilities:
+                project_manager: "R"
+                hardware: ""
+                software: ""
+                testing: ""
+                sponsor: "I"
+                other: "L"
+              duration: 2
+              labor: 16
+            Content Calendar:
+              responsibilities:
+                project_manager: "R"
+                hardware: ""
+                software: ""
+                testing: ""
+                sponsor: "I"
+                other: "L"
+              duration: 2
+              labor: 16
+            Performance Metrics:
+              responsibilities:
+                project_manager: "R"
+                hardware: ""
+                software: "P"
+                testing: ""
+                sponsor: "I"
+                other: "L"
+              duration: 2
+              labor: 16
+  "Production &amp; Deployment":
+    type: "Phase"
+    Manufacturing Setup:
+      Assembly Line Design:
+        Automation Systems:
+          Robot Integration:
+            End Effector Design:
+              Gripper Mechanism:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: "P"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 4
+                labor: 32
+              Sensor Integration:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: "P"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+              Control Software:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "L"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 4
+                labor: 32
+            Motion Planning:
+              Path Optimization:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "L"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+              Collision Avoidance:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "L"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 4
+                labor: 32
+              Speed Control:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "L"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+          Vision System:
+            Camera Setup:
+              Lighting Design:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "L"
+                  software: "P"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
+              Image Processing:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "L"
+                  testing: "P"
+                  sponsor: ""
+                  other: ""
+                duration: 4
+                labor: 32
+              Quality Checks:
+                responsibilities:
+                  project_manager: "R"
+                  hardware: "P"
+                  software: "P"
+                  testing: "L"
+                  sponsor: ""
+                  other: ""
+                duration: 3
+                labor: 24
