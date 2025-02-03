@@ -82,7 +82,7 @@ def convert_yaml_to_wbs_format(yaml_data: Dict) -> Dict[str, List[Tuple[str, Lis
                         result.append((child_name, process_item(child_name, child_items)))
         elif isinstance(items, dict):
             # Handle dictionary items, excluding metadata fields
-            metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'wbs_number'}
+            metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'wbs_number', 'name'}
             for child_name, child_items in items.items():
                 if child_name not in metadata_fields and isinstance(child_items, dict):
                     result.append((child_name, process_item(child_name, child_items)))
@@ -93,13 +93,15 @@ def convert_yaml_to_wbs_format(yaml_data: Dict) -> Dict[str, List[Tuple[str, Lis
     result = {}
     for root_name, root_items in yaml_data.items():
         if isinstance(root_items, dict):
+            # Get project name from the name tag if it exists
+            project_name = root_items.get('name', root_name)
             # Exclude metadata fields at root level
-            metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'wbs_number'}
+            metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'wbs_number', 'name'}
             children = []
             for child_name, child_items in root_items.items():
                 if child_name not in metadata_fields and isinstance(child_items, dict):
                     children.append((child_name, process_item(child_name, child_items)))
-            result[root_name] = children
+            result[project_name] = children
     
     return result
 
@@ -364,15 +366,20 @@ def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=Non
             # Determine type based on content
             if level == 0:
                 current_type = "Project"
+                # Use the name tag if it exists for the project level
+                display_name = content.get('name', name)
             elif content.get('type') == "Phase":
                 current_type = "Phase"
+                display_name = name
             elif 'responsibilities' in content:
                 current_type = "Subtask"
+                display_name = name
             else:
                 # Check if this is a leaf node by looking for children that aren't metadata
                 metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'name'}
                 has_children = any(isinstance(v, dict) and not metadata_fields.intersection(v.keys()) for k, v in content.items())
                 current_type = "Activity" if has_children else "Subtask"
+                display_name = name
             
             # Get responsibilities and other attributes
             responsibilities = content.get('responsibilities', {})
@@ -381,7 +388,7 @@ def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=Non
             
             # Add the current item
             items.append({
-                'name': name,
+                'name': display_name,
                 'parent': parent_name,
                 'type': current_type,
                 'wbs_number': wbs_number,
@@ -397,7 +404,7 @@ def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=Non
                 if isinstance(child_content, dict) and not metadata_fields.intersection({child_name}):
                     items.extend(extract_items(
                         {child_name: child_content},
-                        name,
+                        display_name,
                         level + 1,
                         wbs_number,
                         current_path
@@ -417,6 +424,13 @@ def create_ram_diagram(
         # Load and process YAML data
         yaml_data = load_wbs_from_yaml(yaml_file)
         
+        # Get project name from YAML
+        project_name = ""
+        for root_name, root_items in yaml_data.items():
+            if isinstance(root_items, dict):
+                project_name = root_items.get('name', root_name)
+                break
+        
         # Create the diagram
         dot = Digraph(comment="RAM", engine='dot', format=file_format)
         dot.attr(
@@ -428,9 +442,12 @@ def create_ram_diagram(
             bgcolor="white"
         )
 
-        # Create the main RAM table
-        main_table_html = '''<
+        # Create the main RAM table with project name in header
+        main_table_html = f'''<
         <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+            <TR>
+                <TD BGCOLOR="lightgray" COLSPAN="11"><B>{project_name} - Responsibility Assignment Matrix</B></TD>
+            </TR>
             <TR>
                 <TD BGCOLOR="lightgray">WBS Element/Personnel</TD>
                 <TD BGCOLOR="lightgray">Work Package Type</TD>
