@@ -349,36 +349,87 @@ def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=Non
     if path_index is None:
         path_index = []
 
-    for i, (name, content) in enumerate(data.items(), 1):
-        if isinstance(content, dict):
-            current_path = path_index + [i]
-            
-            # Generate WBS number
-            if level == 0:  # Project level
-                wbs_number = ""
+    # Filter out metadata fields at the current level
+    metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'name'}
+    
+    def is_leaf_node(node):
+        """Check if a node is a leaf node (Subtask)"""
+        return isinstance(node, dict) and 'responsibilities' in node
+
+    def has_non_metadata_children(node):
+        """Check if node has any non-metadata children"""
+        if not isinstance(node, dict):
+            return False
+        return any(k not in metadata_fields and isinstance(v, dict) for k, v in node.items())
+
+    def generate_wbs_number(path, level):
+        """Generate WBS number from path and level"""
+        if level == 0:  # Project level
+            return ""
+        elif level == 1:  # Phase level
+            return f"{path[-1]}.0"
+        elif level == 2:  # Activity level
+            return f"{path[1]}.{path[-1]}"  # e.g., 1.1, 1.2, etc.
+        else:
+            # For deeper levels, remove the first number and join the rest
+            return ".".join(str(x) for x in path[1:]) if len(path) > 1 else str(path[0])
+
+    # Get all valid items (non-metadata) at this level and sort them by structure
+    valid_items = []
+    for k, v in data.items():
+        if k not in metadata_fields and isinstance(v, dict):
+            if level == 1:  # Phase level is determined by hierarchy
+                # Phases come first
+                valid_items.append((0, k, v))
+            elif level == 2:  # Activity level is one level below Phase
+                # Activities come second
+                valid_items.append((1, k, v))
+            elif is_leaf_node(v):
+                # Leaf nodes (Subtasks) come last
+                valid_items.append((2, k, v))
             else:
-                wbs_number = ".".join(str(x) for x in current_path)
+                # Other nodes
+                valid_items.append((1, k, v))
+
+    # Sort by the order key and remove it
+    valid_items.sort(key=lambda x: x[0])
+    valid_items = [(k, v) for _, k, v in valid_items]
+
+    for i, (name, content) in enumerate(valid_items, 1):
+        if isinstance(content, dict):
+            # Update the path index for this item
+            if parent_wbs:
+                # If we have a parent WBS number, parse it and add our index
+                if parent_wbs.endswith('.0'):  # Phase level
+                    current_path = [int(parent_wbs[:-2])]  # Remove .0 and convert to int
+                else:
+                    # Split the parent WBS number and convert all parts to integers
+                    current_path = [int(x) for x in parent_wbs.split('.')]
+                current_path.append(i)
+            else:
+                current_path = path_index + [i]
             
-            # Skip metadata fields
-            if name in {'name', 'type', 'responsibilities', 'duration', 'labor'}:
-                continue
+            # Generate WBS number for display
+            wbs_number = generate_wbs_number(current_path, level)
             
-            # Determine type based on content
+            # For passing to children, use the full path string
+            child_wbs = ".".join(str(x) for x in current_path)
+            
+            # Determine type based on level and content
             if level == 0:
                 current_type = "Project"
-                # Use the name tag if it exists for the project level
                 display_name = content.get('name', name)
-            elif content.get('type') == "Phase":
+            elif level == 1:  # Phase is determined by level
                 current_type = "Phase"
                 display_name = name
-            elif 'responsibilities' in content:
+            elif level == 2:  # Activity is one level below Phase
+                current_type = "Activity"
+                display_name = name
+            elif is_leaf_node(content):
                 current_type = "Subtask"
                 display_name = name
             else:
-                # Check if this is a leaf node by looking for children that aren't metadata
-                metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'name'}
-                has_children = any(isinstance(v, dict) and not metadata_fields.intersection(v.keys()) for k, v in content.items())
-                current_type = "Activity" if has_children else "Subtask"
+                current_type = "Task"  # Everything else is a Task
                 display_name = name
             
             # Get responsibilities and other attributes
@@ -399,16 +450,16 @@ def extract_items(data, parent_name=None, level=0, parent_wbs="", path_index=Non
             })
             
             # Process children (excluding metadata fields)
-            metadata_fields = {'type', 'responsibilities', 'duration', 'labor', 'name'}
-            for child_name, child_content in content.items():
-                if isinstance(child_content, dict) and not metadata_fields.intersection({child_name}):
-                    items.extend(extract_items(
-                        {child_name: child_content},
-                        display_name,
-                        level + 1,
-                        wbs_number,
-                        current_path
-                    ))
+            children_data = {k: v for k, v in content.items() if k not in metadata_fields and isinstance(v, dict)}
+            if children_data:
+                items.extend(extract_items(
+                    children_data,
+                    display_name,
+                    level + 1,
+                    child_wbs,
+                    current_path
+                ))
+    
     return items
 
 def create_ram_diagram(
@@ -487,9 +538,10 @@ def create_ram_diagram(
                 bg_color = WBSColors.DEFAULT.get(item['level'], WBSColors.DEFAULT[0])
             else:
                 bg_color = {
-                    'Project': '#f9f5d7',
-                    'Phase': '#ebdbb2',
-                    'Activity': '#d5c4a1'
+                    'Project': '#f9f5d7',  # Light beige
+                    'Phase': '#ebdbb2',    # Darker beige
+                    'Activity': '#d5c4a1',  # Light brown
+                    'Task': '#bdae93'      # Medium brown
                 }.get(item['type'], 'white')
             
             row = '<TR>'
@@ -498,18 +550,14 @@ def create_ram_diagram(
             row += f'<TD BGCOLOR="{bg_color}" ALIGN="left">{name_cell}</TD>'
             row += f'<TD BGCOLOR="{bg_color}" ALIGN="left">{item["type"]}</TD>'
             
-            # Work package cell (WBS number for Subtasks)
-            if item['type'] == 'Subtask':
-                row += f'<TD BGCOLOR="{bg_color}" ALIGN="left">{item["wbs_number"]}</TD>'
-            else:
-                row += f'<TD BGCOLOR="{bg_color}" ALIGN="left"></TD>'
+            # Work package cell (WBS number)
+            row += f'<TD BGCOLOR="{bg_color}" ALIGN="left">{item["wbs_number"]}</TD>'
             
-            # Role cells - updated to match YAML file order
+            # Role cells
             roles = ['project_manager', 'hardware', 'software', 'testing', 'sponsor', 'other']
             for role in roles:
                 resp = item['responsibilities'].get(role, '')
                 if item['type'] == 'Subtask' and resp:
-                    # For Subtasks with responsibilities, use updated responsibility colors
                     resp_color = {
                         'L': '#af3a03',  # Lead - Darker orange
                         'P': '#427b58',  # Participant - Even darker green
@@ -527,14 +575,20 @@ def create_ram_diagram(
             
             main_table_html += row
 
+        # Close the main table
+        main_table_html += '</TABLE>>'
+        
+        # Create the main RAM table node
+        dot.node('ram_table', main_table_html, shape='none')
+
         # Calculate totals
-        total_wbs_boxes = len(all_items)
+        total_items = len(all_items)
         total_phases = sum(1 for item in all_items if item['type'] == 'Phase')
         total_activities = sum(1 for item in all_items if item['type'] == 'Activity')
-        total_work_packages = sum(1 for item in all_items if item['type'] == 'Subtask')
-
-        # Create nodes for both tables with some vertical spacing
-        dot.node('ram_table', main_table_html + '</TABLE>>', shape='none')
+        total_tasks = sum(1 for item in all_items if item['type'] == 'Task')
+        total_subtasks = sum(1 for item in all_items if item['type'] == 'Subtask')
+        total_duration = sum(int(item['duration']) for item in all_items if item['duration'])
+        total_labor = sum(int(item['labor']) for item in all_items if item['labor'])
 
         # Create a table to hold both totals and legend side by side
         bottom_table_html = '''<
@@ -546,8 +600,8 @@ def create_ram_diagram(
                     <TD BGCOLOR="lightgray" COLSPAN="2" ALIGN="center"><B>Project Totals</B></TD>
                 </TR>
                 <TR>
-                    <TD BGCOLOR="lightgray" ALIGN="right">Total WBS Boxes:</TD>
-                    <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_wbs_boxes) + '''</TD>
+                    <TD BGCOLOR="lightgray" ALIGN="right">Total Items:</TD>
+                    <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_items) + '''</TD>
                 </TR>
                 <TR>
                     <TD BGCOLOR="lightgray" ALIGN="right">Total Phases:</TD>
@@ -558,29 +612,47 @@ def create_ram_diagram(
                     <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_activities) + '''</TD>
                 </TR>
                 <TR>
+                    <TD BGCOLOR="lightgray" ALIGN="right">Total Tasks:</TD>
+                    <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_tasks) + '''</TD>
+                </TR>
+                <TR>
                     <TD BGCOLOR="lightgray" ALIGN="right">Total Work Packages:</TD>
-                    <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_work_packages) + '''</TD>
+                    <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_subtasks) + '''</TD>
+                </TR>
+                <TR>
+                    <TD BGCOLOR="lightgray" ALIGN="right">Total Duration (Days):</TD>
+                    <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_duration) + '''</TD>
+                </TR>
+                <TR>
+                    <TD BGCOLOR="lightgray" ALIGN="right">Total Labor (Hours):</TD>
+                    <TD BGCOLOR="white" ALIGN="left">&nbsp;''' + str(total_labor) + '''</TD>
                 </TR>
             </TABLE>
         </TD>
         <TD>
-            <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
-                <TR>
-                    <TD BGCOLOR="lightgray" COLSPAN="8" ALIGN="center"><B>Key</B></TD>
-                </TR>
-                <TR>
-                    <TD BGCOLOR="#af3a03">L = Lead</TD>
-                    <TD BGCOLOR="#427b58">P = Participant</TD>
-                    <TD BGCOLOR="#8f3f71">R = Reviewer</TD>
-                    <TD BGCOLOR="#076678">I = Input</TD>
-                    <TD BGCOLOR="#f9f5d7">Project</TD>
-                    <TD BGCOLOR="#ebdbb2">Phase</TD>
-                    <TD BGCOLOR="#d5c4a1">Activity</TD>
-                    <TD BGCOLOR="white">Subtask*</TD>
-                </TR>
-                <TR>
-                    <TD COLSPAN="8" ALIGN="left" PORT="note">* Subtask rows are colored to match their corresponding level in the WBS diagram</TD>
-                </TR>
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">
+            <TR><TD HEIGHT="40"></TD></TR>
+            <TR><TD>
+                <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+                    <TR>
+                        <TD BGCOLOR="lightgray" COLSPAN="9" ALIGN="center"><B>Key</B></TD>
+                    </TR>
+                    <TR>
+                        <TD BGCOLOR="#af3a03" ALIGN="left">L = Lead</TD>
+                        <TD BGCOLOR="#427b58" ALIGN="left">P = Participant</TD>
+                        <TD BGCOLOR="#8f3f71" ALIGN="left">R = Reviewer</TD>
+                        <TD BGCOLOR="#076678" ALIGN="left">I = Input</TD>
+                        <TD BGCOLOR="#f9f5d7" ALIGN="left">Project</TD>
+                        <TD BGCOLOR="#ebdbb2" ALIGN="left">Phase</TD>
+                        <TD BGCOLOR="#d5c4a1" ALIGN="left">Activity</TD>
+                        <TD BGCOLOR="#bdae93" ALIGN="left">Task</TD>
+                        <TD BGCOLOR="white" ALIGN="left">Subtask*</TD>
+                    </TR>
+                    <TR>
+                        <TD COLSPAN="9" ALIGN="left">* Subtask rows are colored to match their corresponding level in the WBS diagram</TD>
+                    </TR>
+                </TABLE>
+            </TD></TR>
             </TABLE>
         </TD>
         </TR>
@@ -680,7 +752,8 @@ def export_to_excel(all_items: List[Dict], output_filename: str = "project_data"
                 colors = {
                     'Project': 'F9F5D7',
                     'Phase': 'EBDBB2',
-                    'Activity': 'D5C4A1'
+                    'Activity': 'D5C4A1',
+                    'Task': 'BDAE93'
                 }
                 color = colors.get(item['type'], 'FFFFFF')
                 fill = openpyxl.styles.PatternFill(start_color=color, end_color=color, fill_type='solid')
@@ -711,10 +784,13 @@ def export_to_excel(all_items: List[Dict], output_filename: str = "project_data"
         
         # Add totals section
         total_rows = len(all_items) + 3  # Leave a blank row
-        total_wbs_boxes = len(all_items)
+        total_items = len(all_items)
         total_phases = sum(1 for item in all_items if item['type'] == 'Phase')
         total_activities = sum(1 for item in all_items if item['type'] == 'Activity')
-        total_work_packages = sum(1 for item in all_items if item['type'] == 'Subtask')
+        total_tasks = sum(1 for item in all_items if item['type'] == 'Task')
+        total_subtasks = sum(1 for item in all_items if item['type'] == 'Subtask')
+        total_duration = sum(int(item['duration']) for item in all_items if item['duration'])
+        total_labor = sum(int(item['labor']) for item in all_items if item['labor'])
         
         # Write totals header
         worksheet.cell(row=total_rows, column=1, value='Project Totals').fill = header_fill
@@ -723,10 +799,13 @@ def export_to_excel(all_items: List[Dict], output_filename: str = "project_data"
         
         # Write totals
         totals_data = [
-            ('Total WBS Boxes:', total_wbs_boxes),
+            ('Total Items:', total_items),
             ('Total Phases:', total_phases),
             ('Total Activities:', total_activities),
-            ('Total Work Packages:', total_work_packages)
+            ('Total Tasks:', total_tasks),
+            ('Total Work Packages:', total_subtasks),
+            ('Total Duration (Days):', total_duration),
+            ('Total Labor (Hours):', total_labor)
         ]
         
         for idx, (label, value) in enumerate(totals_data):
@@ -752,6 +831,7 @@ def export_to_excel(all_items: List[Dict], output_filename: str = "project_data"
             ('Project', 'F9F5D7'),
             ('Phase', 'EBDBB2'),
             ('Activity', 'D5C4A1'),
+            ('Task', 'BDAE93'),
             ('Subtask*', 'FFFFFF')
         ]
         

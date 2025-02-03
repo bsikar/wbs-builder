@@ -17,7 +17,6 @@
 #   null = No involvement
 #
 # Attributes:
-#   type: Only needed for Phase, others are inferred (Project=root, Subtask=leaf, Activity=others)
 #   responsibilities: Required for leaf nodes (Subtasks)
 #     project_manager: L/P/R/I
 #     hardware: L/P/R/I
@@ -31,7 +30,6 @@
 project:
   name: "SelfiePod"
   Market Analysis:
-    type: "Phase"
     Materials Research:
       Battery Research:
         Battery Types:
@@ -331,7 +329,6 @@ project:
           duration: 2
           labor: 16
   Build:
-    type: "Phase"
     Component Sourcing:
       Battery Procurement:
         Supplier Selection:
@@ -459,7 +456,6 @@ project:
           duration: 3
           labor: 24
   Testing:
-    type: "Phase"
     Quality Assurance:
       Component Testing:
         Electrical Testing:
@@ -559,7 +555,6 @@ project:
                 duration: 3
                 labor: 24
   Marketing:
-    type: "Phase"
     Digital Marketing:
       Social Media:
         Platform Strategy:
@@ -658,7 +653,6 @@ project:
               duration: 2
               labor: 16
   "Production &amp; Deployment":
-    type: "Phase"
     Manufacturing Setup:
       Assembly Line Design:
         Automation Systems:
