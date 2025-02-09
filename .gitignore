@@ -169,3 +169,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Generated files
+*.pdf
+*.png
+project_data*.xlsx
+wbs_output.*
+ram_output.*
