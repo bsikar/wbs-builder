@@ -1,0 +1,70 @@
+title: "Wireless Surround Sound System Block Diagram"
+description: "Functional block diagram for wireless surround sound system"
+
+blocks:
+  # Transmitter section
+  - id: "adc"
+    name: "ADC"
+  - id: "ir_transmitter"
+    name: "IR Transmitter"
+  - id: "transmitter_power"
+    name: "Transmitter\nPower Supply"
+
+  # Receiver section
+  - id: "ir_receiver_left"
+    name: "IR Receiver\nLeft Rear Channel"
+  - id: "ir_receiver_right"
+    name: "IR Receiver\nRight Rear Channel"
+  - id: "dac_left"
+    name: "DAC"
+  - id: "dac_right"
+    name: "DAC"
+  - id: "receiver_power_1"
+    name: "IR Receiver/Amplifier\nPower Supply"
+  - id: "receiver_power_2"
+    name: "IR Receiver/Amplifier\nPower Supply"
+  - id: "amp_left"
+    name: "Audio\nAmplifier"
+  - id: "amp_right"
+    name: "Audio\nAmplifier"
+
+connections:
+  # Transmitter section connections
+  - from: "transmitter_power"
+    to: "adc"
+  - from: "transmitter_power"
+    to: "ir_transmitter"
+  - from: "adc"
+    to: "ir_transmitter"
+
+  # Connections to receiver section
+  - from: "ir_transmitter"
+    to: "ir_receiver_left"
+    label: "Left Rear Channel"
+  - from: "ir_transmitter"
+    to: "ir_receiver_right"
+    label: "Right Rear Channel"
+
+  # Left channel receiver connections
+  - from: "receiver_power_1"
+    to: "ir_receiver_left"
+  - from: "ir_receiver_left"
+    to: "dac_left"
+  - from: "dac_left"
+    to: "amp_left"
+
+  # Right channel receiver connections
+  - from: "receiver_power_2"
+    to: "ir_receiver_right"
+  - from: "ir_receiver_right"
+    to: "dac_right"
+  - from: "dac_right"
+    to: "amp_right"
+
+# Layout hints
+ranks:
+  - [transmitter_power, adc, ir_transmitter]
+  - [ir_receiver_left, ir_receiver_right]
+  - [dac_left, dac_right]
+  - [amp_left, amp_right]
+  - [receiver_power_1, receiver_power_2]

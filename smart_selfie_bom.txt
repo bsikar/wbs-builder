@@ -1,0 +1,128 @@
+Smart Selfie Stick - Bill of Materials (Common Components)
+
+MAIN UNIT:
+Power Management:
+- Battery: 3.7V Li-Po Battery 2000mAh (Generic)
+- Backup Battery: CR2032 (Panasonic) - For RTC/Settings
+- Battery Management: BQ24075RGTR (Texas Instruments)
+- 3.3V Regulator: AMS1117-3.3 (Advanced Monolithic Systems)
+- 5V Boost: MT3608 (Aerosemi)
+- Protection MOSFET: FS8205A (Fortune)
+
+Main Control:
+- MCU: NRF51822-QFAB-T (Nordic Semiconductor)
+  * Built-in Bluetooth Low Energy
+  * ARM Cortex-M0 core
+  * 256KB Flash / 16KB RAM
+  * QFN48 package
+- Crystal: 16MHz, SMD 3225 (for Nordic MCU)
+- 32.768kHz Crystal (for RTC)
+
+Motor Control:
+- Motor Driver: DRV8833PWPR (Texas Instruments)
+- Servo Motor: MG90S or SG90
+
+Sensors:
+- IMU: MPU6050 (InvenSense/TDK)
+- Hall Effect Sensor: A3144 (Allegro)
+
+Main Unit Interface:
+- Status LED: 0603 SMD, RGB
+- LED Resistors: 0603 SMD, 1kΩ x3
+
+REMOTE UNIT:
+Power Management:
+- Battery: CR2032 (Panasonic)
+- 3.3V Regulator: TLV70033 (Texas Instruments)
+  * Ultra-low quiescent current
+  * SOT-23-5 package
+
+Remote Control:
+- MCU: NRF51822-QFAC-R7 (Nordic Semiconductor)
+  * Smaller QFN32 package
+  * Same core as main unit
+  * Lower power configuration
+- Crystal: 16MHz, SMD 2016 (smaller package)
+- 32.768kHz Crystal (for RTC)
+
+User Interface:
+- Tactile Switches: B3U-1000P (Omron) x4
+  * Ultra-low profile
+  * 1.2mm height
+- Status LED: 0603 SMD, Single Color
+- LED Resistor: 0603 SMD, 1kΩ
+
+PASSIVE COMPONENTS:
+Main Unit Passives:
+Capacitors (0603 SMD):
+- 10µF x4 (Power supply decoupling)
+- 4.7µF x4 (Power supply decoupling)
+- 1µF x4 (MCU decoupling)
+- 0.1µF x10 (General decoupling)
+- 22pF x2 (16MHz crystal)
+- 12pF x2 (32.768kHz crystal)
+
+Remote Unit Passives:
+Capacitors (0402 SMD for size reduction):
+- 4.7µF x2 (Power supply)
+- 1µF x2 (MCU decoupling)
+- 0.1µF x4 (General decoupling)
+- 12pF x4 (Crystals)
+
+Resistors:
+Main Unit (0603 SMD):
+- 10kΩ x5 (pull-up/down)
+- 1kΩ x5 (LED current limiting)
+- 4.7kΩ x2 (I2C pull-up)
+- 0Ω x2 (jumpers)
+
+Remote Unit (0402 SMD):
+- 10kΩ x4 (button pull-up)
+- 1kΩ x1 (LED current limiting)
+
+Inductors:
+Main Unit:
+- 4.7µH (power supply) x2
+- Ferrite Bead (power filtering) x2
+
+Remote Unit:
+- Ferrite Bead (power filtering) x1
+
+CONNECTORS:
+Main Unit:
+- USB Type-C Receptacle (USB 2.0 Power Delivery compatible)
+  * Supports 5V/3A charging
+  * CC pins configured for proper PD negotiation
+- JST-PH 2-pin (battery)
+- JST-XH 3-pin (servo)
+- 2x5 1.27mm Header (programming)
+
+Remote Unit:
+- CR2032 Battery Holder (SMD)
+- 2x5 1.27mm Header (programming)
+
+MECHANICAL:
+Main Unit:
+- Camera Mount: 1/4"-20 UNC Thread Insert
+  * Standard tripod mount size
+  * Brass material for durability
+- Phone Clamp Spring: Stainless Steel
+- Mounting Screws: M2x6mm (for PCB mounting)
+
+Remote Unit:
+- Enclosure Screws: M1.6x4mm
+- Button Caps: Silicone, 4mm diameter
+
+Notes:
+- All components are RoHS compliant
+- SMD components are industrial temp range (-40°C to +85°C)
+- Remote unit uses smaller packages (0402) for size reduction
+- Order 10-20% extra for assembly losses
+- USB-C implementation follows USB-IF Power Delivery specification
+- Camera mount follows standard photography mounting specifications
+
+References:
+- Nordic NRF51822 Datasheet & Reference Design
+- USB-C PD Specification v2.0
+- Standard Camera Mount: 1/4"-20 UNC (ISO 1222:2010)
+- BLE Protocol Specification v5.0 

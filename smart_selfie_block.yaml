@@ -1,0 +1,90 @@
+title: "Smart Selfie Stick System with Remote Control"
+description: "Block Diagram"
+
+blocks:
+  # Main Unit - Power Management
+  - id: "main_battery"
+    name: "LiPo Battery\n(Main)"
+  - id: "main_power_mgmt"
+    name: "Power Management\nCircuit"
+  - id: "main_voltage_reg"
+    name: "Voltage\nRegulator"
+
+  # Main Unit - Control
+  - id: "main_mcu"
+    name: "Main MCU\n(NRF51822)"
+  - id: "motor_driver"
+    name: "Motor Driver"
+  - id: "motor"
+    name: "Servo Motor"
+
+  # Main Unit - Sensors
+  - id: "phone_mount"
+    name: "Phone Mount\nSensor"
+  - id: "angle_sensor"
+    name: "Angle\nSensor"
+  - id: "main_status_led"
+    name: "Status LED"
+
+  # Remote Unit - Power
+  - id: "remote_battery"
+    name: "CR2032\nBattery"
+  - id: "remote_reg"
+    name: "Remote\nRegulator"
+
+  # Remote Unit - Control
+  - id: "remote_mcu"
+    name: "Remote MCU\n(NRF51822)"
+  - id: "control_buttons"
+    name: "Control\nButtons"
+  - id: "remote_status_led"
+    name: "Remote\nStatus LED"
+
+connections:
+  # Main Unit Power
+  - from: "main_battery"
+    to: "main_power_mgmt"
+  - from: "main_power_mgmt"
+    to: "main_voltage_reg"
+  - from: "main_voltage_reg"
+    to: "main_mcu"
+    label: "3.3V"
+  - from: "main_power_mgmt"
+    to: "motor_driver"
+    label: "5V"
+
+  # Main Unit Control
+  - from: "main_mcu"
+    to: "motor_driver"
+    label: "PWM"
+  - from: "motor_driver"
+    to: "motor"
+  - from: "main_mcu"
+    to: "main_status_led"
+
+  # Main Unit Sensors
+  - from: "phone_mount"
+    to: "main_mcu"
+    label: "Phone Detection"
+  - from: "angle_sensor"
+    to: "main_mcu"
+    label: "Position Data"
+
+  # Remote Unit Power
+  - from: "remote_battery"
+    to: "remote_reg"
+  - from: "remote_reg"
+    to: "remote_mcu"
+    label: "3.3V"
+
+  # Remote Unit Control
+  - from: "control_buttons"
+    to: "remote_mcu"
+  - from: "remote_mcu"
+    to: "remote_status_led"
+
+  # Wireless Communication
+  - from: "remote_mcu"
+    to: "main_mcu"
+    label: "BLE\nControl Commands"
+    style: "dashed"

@@ -1,0 +1,80 @@
+# Test network diagram structure matching lecture example
+project:
+  name: "Test Project"
+  A:
+    responsibilities:
+      project_manager: "L"
+      hardware: "P"
+      software: ""
+      testing: ""
+      sponsor: ""
+      other: ""
+    duration: 5
+    labor: 40
+
+  B:
+    responsibilities:
+      project_manager: "L"
+      hardware: "P"
+      software: ""
+      testing: ""
+      sponsor: ""
+      other: ""
+    duration: 3
+    labor: 24
+    dependencies:
+      - "A"
+
+  C:
+    responsibilities:
+      project_manager: "L"
+      hardware: "P"
+      software: ""
+      testing: ""
+      sponsor: ""
+      other: ""
+    duration: 8
+    labor: 64
+    dependencies:
+      - "A"
+
+  D:
+    responsibilities:
+      project_manager: "L"
+      hardware: "P"
+      software: ""
+      testing: ""
+      sponsor: ""
+      other: ""
+    duration: 2
+    labor: 16
+    dependencies:
+      - "B"
+
+  E:
+    responsibilities:
+      project_manager: "L"
+      hardware: "P"
+      software: ""
+      testing: ""
+      sponsor: ""
+      other: ""
+    duration: 2
+    labor: 16
+    dependencies:
+      - "B"
+
+  F:
+    responsibilities:
+      project_manager: "L"
+      hardware: "P"
+      software: ""
+      testing: ""
+      sponsor: ""
+      other: ""
+    duration: 10
+    labor: 80
+    dependencies:
+      - "D"
+      - "E"
+      - "C"
