@@ -1,49 +1,50 @@
 title: "Smart Selfie Stick System with Remote Control"
-description: "Block Diagram"
+description: "Block Diagram with Pin Mappings"
 
 blocks:
   # Main Unit - Power Management
   - id: "main_battery"
-    name: "LiPo Battery\n(Main)"
+    name: "LiPo Battery"
   - id: "main_power_mgmt"
-    name: "Power Management\nCircuit"
+    name: "Power Management"
   - id: "main_voltage_reg"
-    name: "Voltage\nRegulator"
+    name: "3.3V Regulator"
 
   # Main Unit - Control
   - id: "main_mcu"
-    name: "Main MCU\n(NRF51822)"
+    name: "Main MCU (NRF51822)\nP0.01/02: Motor Control\nP0.03: LED\nP0.04: Phone Detect\nP0.05/06: I2C\nP0.07: BLE"
   - id: "motor_driver"
     name: "Motor Driver"
   - id: "motor"
-    name: "Servo Motor"
+    name: "Servo"
 
   # Main Unit - Sensors
   - id: "phone_mount"
-    name: "Phone Mount\nSensor"
+    name: "Phone Sensor"
   - id: "angle_sensor"
-    name: "Angle\nSensor"
+    name: "MPU6050\nI2C: SCL/SDA"
   - id: "main_status_led"
     name: "Status LED"
 
   # Remote Unit - Power
   - id: "remote_battery"
-    name: "CR2032\nBattery"
+    name: "CR2032"
   - id: "remote_reg"
-    name: "Remote\nRegulator"
+    name: "3.3V Regulator"
 
   # Remote Unit - Control
   - id: "remote_mcu"
-    name: "Remote MCU\n(NRF51822)"
+    name: "Remote MCU (NRF51822)\nP0.01-04: Buttons\nP0.05: LED\nP0.06: BLE"
   - id: "control_buttons"
-    name: "Control\nButtons"
+    name: "Control Pad\nUp/Down/Left/Right"
   - id: "remote_status_led"
-    name: "Remote\nStatus LED"
+    name: "Status LED"
 
 connections:
   # Main Unit Power
   - from: "main_battery"
     to: "main_power_mgmt"
+    label: "3.7V"
   - from: "main_power_mgmt"
     to: "main_voltage_reg"
   - from: "main_voltage_reg"
@@ -56,23 +57,25 @@ connections:
   # Main Unit Control
   - from: "main_mcu"
     to: "motor_driver"
-    label: "PWM"
+    label: "PWM/DIR"
   - from: "motor_driver"
     to: "motor"
   - from: "main_mcu"
     to: "main_status_led"
+    label: "P0.03"
 
   # Main Unit Sensors
   - from: "phone_mount"
     to: "main_mcu"
-    label: "Phone Detection"
+    label: "P0.04"
   - from: "angle_sensor"
     to: "main_mcu"
-    label: "Position Data"
+    label: "I2C"
 
   # Remote Unit Power
   - from: "remote_battery"
     to: "remote_reg"
+    label: "3V"
   - from: "remote_reg"
     to: "remote_mcu"
     label: "3.3V"
@@ -80,11 +83,13 @@ connections:
   # Remote Unit Control
   - from: "control_buttons"
     to: "remote_mcu"
+    label: "P0.01-04"
   - from: "remote_mcu"
     to: "remote_status_led"
+    label: "P0.05"
 
   # Wireless Communication
   - from: "remote_mcu"
     to: "main_mcu"
-    label: "BLE\nControl Commands"
+    label: "BLE"
     style: "dashed"
