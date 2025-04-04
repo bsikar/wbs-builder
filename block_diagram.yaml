@@ -1,70 +1,246 @@
-title: "Wireless Surround Sound System Block Diagram"
-description: "Functional block diagram for wireless surround sound system"
+title: "Selfie Stick System with Remote"
+description: "Block Diagram with Pin Mappings"
+comment: "Selfie Stick Block Diagram"
 
-blocks:
-  # Transmitter section
-  - id: "adc"
-    name: "ADC"
-  - id: "ir_transmitter"
-    name: "IR Transmitter"
-  - id: "transmitter_power"
-    name: "Transmitter\nPower Supply"
+# Global graph attributes
+graph_attributes:
+  graph:
+    splines: "ortho"
+    nodesep: "0.5"
+    ranksep: "0.7"
+    pad: "0.5"
+    bgcolor: "white"
+    rankdir: "LR"
+    compound: "true"
+    style: "filled"
+    margin: "0.2"
+    newrank: "true"
+    ordering: "out"
+    ratio: "fill"
+    size: "11,8.5"
 
-  # Receiver section
-  - id: "ir_receiver_left"
-    name: "IR Receiver\nLeft Rear Channel"
-  - id: "ir_receiver_right"
-    name: "IR Receiver\nRight Rear Channel"
-  - id: "dac_left"
-    name: "DAC"
-  - id: "dac_right"
-    name: "DAC"
-  - id: "receiver_power_1"
-    name: "IR Receiver/Amplifier\nPower Supply"
-  - id: "receiver_power_2"
-    name: "IR Receiver/Amplifier\nPower Supply"
-  - id: "amp_left"
-    name: "Audio\nAmplifier"
-  - id: "amp_right"
-    name: "Audio\nAmplifier"
+# Title styling
+title_attributes:
+  labelloc: "t"
+  fontsize: "16"
+  fontname: "Arial"
 
+# Define clusters (main groups)
+clusters:
+  - name: "main"
+    attributes:
+      label: "Selfie Stick"
+      style: "rounded,filled"
+      color: "gray"
+      fillcolor: "#F8F9F9"
+      fontname: "Arial"
+      fontsize: "16"
+      penwidth: "2.0"
+      margin: "20"
+    subgraphs:
+      - name: "control"
+        attributes:
+          label: "Phone Mount"
+          style: "rounded,filled"
+          color: "#3498DB"
+          fillcolor: "#EBF5FB"
+          fontname: "Arial"
+          fontsize: "14"
+          margin: "10"
+          penwidth: "1.5"
+        nodes:
+          - id: "phone_stand"
+            name: "Phone Stand\nwith Mount"
+            attributes:
+              shape: "box"
+              style: "filled"
+              fillcolor: "white"
+              color: "#3498DB"
+              fontname: "Arial"
+              fontsize: "12"
+              height: "0.6"
+              width: "2.0"
+
+  - name: "remote"
+    attributes:
+      label: "Remote"
+      style: "rounded,filled"
+      color: "gray"
+      fillcolor: "#F8F9F9"
+      fontname: "Arial"
+      fontsize: "16"
+      penwidth: "2.0"
+      margin: "20"
+    subgraphs:
+      - name: "remote_control"
+        attributes:
+          label: "Control System"
+          style: "rounded,filled"
+          color: "#3498DB"
+          fillcolor: "#EBF5FB"
+          fontname: "Arial"
+          fontsize: "14"
+          margin: "10"
+          penwidth: "1.5"
+        nodes:
+          - id: "photo_button"
+            name: "Photo Button\n(GPIO Input)"
+            attributes:
+              shape: "box"
+              style: "filled"
+              fillcolor: "white"
+              color: "#3498DB"
+              fontname: "Arial"
+              fontsize: "12"
+              height: "0.6"
+              width: "2.0"
+          - id: "bt_module"
+            name: "BT-W8000-SOP8\nPA3/ADC: Button Input (Pin 4)\nPB5/TMS: UART TX (Pin 3)\nXO16M (Pin 5)\nXI16M (Pin 6)\nVDD33 (Pin 7)\nANT (Pin 8)\nGND (Pin 1)"
+            attributes:
+              shape: "box"
+              style: "filled"
+              fillcolor: "white"
+              color: "#3498DB"
+              fontname: "Arial"
+              fontsize: "12"
+              height: "2.0"
+              width: "3.0"
+          - id: "crystal_circuit"
+            name: "Clock Circuit\n16MHz Crystal (X1)\nC15, C16: 5.6pF"
+            attributes:
+              shape: "box"
+              style: "filled"
+              fillcolor: "white"
+              color: "#3498DB"
+              fontname: "Arial"
+              fontsize: "12"
+              height: "0.8"
+              width: "2.0"
+          - id: "antenna_circuit"
+            name: "Antenna Circuit\nANT-PCB\nR9: 0Ω\nANT2 (Optional)"
+            attributes:
+              shape: "box"
+              style: "filled"
+              fillcolor: "white"
+              color: "#3498DB"
+              fontname: "Arial"
+              fontsize: "12"
+              height: "0.8"
+              width: "2.0"
+          - id: "decoupling"
+            name: "Power Decoupling\nC14: 0.1µF"
+            attributes:
+              shape: "box"
+              style: "filled"
+              fillcolor: "white"
+              color: "#E74C3C"
+              fontname: "Arial"
+              fontsize: "12"
+              height: "0.6"
+              width: "1.5"
+      - name: "remote_power"
+        attributes:
+          label: "Power"
+          style: "rounded,filled"
+          color: "#E74C3C"
+          fillcolor: "#FDEDEC"
+          fontname: "Arial"
+          fontsize: "14"
+          margin: "10"
+          penwidth: "1.5"
+        nodes:
+          - id: "remote_battery"
+            name: "CR1632\n(3V)"
+            attributes:
+              shape: "box"
+              style: "filled"
+              fillcolor: "white"
+              color: "#E74C3C"
+              fontname: "Arial"
+              fontsize: "12"
+              height: "0.6"
+              width: "1.2"
+
+# Define connections between nodes
 connections:
-  # Transmitter section connections
-  - from: "transmitter_power"
-    to: "adc"
-  - from: "transmitter_power"
-    to: "ir_transmitter"
-  - from: "adc"
-    to: "ir_transmitter"
+  # Button Input Connection
+  - from: "photo_button"
+    to: "bt_module"
+    label: "PA3/ADC"
+    attributes:
+      fontsize: "10"
+      fontname: "Arial"
+      color: "#3498DB"
+      penwidth: "1.5"
+      weight: "1"
+      labelfloat: "true"
+      labeldistance: "2.0"
 
-  # Connections to receiver section
-  - from: "ir_transmitter"
-    to: "ir_receiver_left"
-    label: "Left Rear Channel"
-  - from: "ir_transmitter"
-    to: "ir_receiver_right"
-    label: "Right Rear Channel"
+  # Power Connections
+  - from: "remote_battery"
+    to: "decoupling"
+    label: "3.3V"
+    attributes:
+      fontsize: "10"
+      fontname: "Arial"
+      color: "#E74C3C"
+      penwidth: "1.5"
+      weight: "2"
+      labelfloat: "true"
+      labeldistance: "2.0"
 
-  # Left channel receiver connections
-  - from: "receiver_power_1"
-    to: "ir_receiver_left"
-  - from: "ir_receiver_left"
-    to: "dac_left"
-  - from: "dac_left"
-    to: "amp_left"
+  - from: "decoupling"
+    to: "bt_module"
+    label: "VDD33"
+    attributes:
+      fontsize: "10"
+      fontname: "Arial"
+      color: "#E74C3C"
+      penwidth: "1.5"
+      weight: "2"
+      labelfloat: "true"
+      labeldistance: "2.0"
 
-  # Right channel receiver connections
-  - from: "receiver_power_2"
-    to: "ir_receiver_right"
-  - from: "ir_receiver_right"
-    to: "dac_right"
-  - from: "dac_right"
-    to: "amp_right"
+  # Crystal Connection
+  - from: "crystal_circuit"
+    to: "bt_module"
+    label: "16MHz"
+    attributes:
+      fontsize: "10"
+      fontname: "Arial"
+      color: "#3498DB"
+      penwidth: "1.5"
+      weight: "1"
+      labelfloat: "true"
+      labeldistance: "2.0"
 
-# Layout hints
-ranks:
-  - [transmitter_power, adc, ir_transmitter]
-  - [ir_receiver_left, ir_receiver_right]
-  - [dac_left, dac_right]
-  - [amp_left, amp_right]
-  - [receiver_power_1, receiver_power_2]
+  # Antenna Connection
+  - from: "bt_module"
+    to: "antenna_circuit"
+    label: "ANT"
+    attributes:
+      fontsize: "10"
+      fontname: "Arial"
+      color: "#2980B9"
+      penwidth: "1.5"
+      weight: "1"
+      labelfloat: "true"
+      labeldistance: "2.0"
+
+  # Wireless Communication
+  - from: "bt_module"
+    to: "phone_stand"
+    label: "BLE"
+    attributes:
+      fontsize: "10"
+      fontname: "Arial"
+      style: "dashed"
+      color: "#2980B9"
+      penwidth: "1.5"
+      weight: "0"
+      constraint: "false"
+      labelfloat: "true"
+      labeldistance: "2.0"
+
+# Output formats
+output_formats: ["pdf", "png"]
